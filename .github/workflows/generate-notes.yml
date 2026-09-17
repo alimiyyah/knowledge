@@ -1,1 +1,45 @@
 
+name: Generate Class Notes
+
+on:
+  push:
+    paths:
+      - 'transcripts/**'
+
+jobs:
+  generate-notes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install @anthropic-ai/sdk
+
+      - name: Detect changed date folders
+        id: changed
+        run: |
+          FOLDERS=$(git diff --name-only HEAD^ HEAD -- transcripts/ | cut -d/ -f2 | sort -u | tr '\n' ',' | sed 's/,$//')
+          echo "folders=$FOLDERS" >> "$GITHUB_OUTPUT"
+
+      - name: Generate consolidated notes
+        if: steps.changed.outputs.folders != ''
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CHANGED_FOLDERS: ${{ steps.changed.outputs.folders }}
+        run: node scripts/generate-notes.js
+
+      - name: Commit generated notes
+        run: |
+          git config user.name "notes-bot"
+          git config user.email "notes-bot@users.noreply.github.com"
+          git add notes/
+          git diff --staged --quiet || git commit -m "Auto-generate consolidated notes"
+          git push
