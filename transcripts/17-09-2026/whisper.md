@@ -1179,5 +1179,4 @@ Them:  I have.
 Them:  To go. طيب، إلى هنا.
 Them:  طيب، إذا كان عندنا أحد سؤال يسأل فيما بعد، طيب، if anyone has any question, send it to me in a text. طيب، عندي ليس عندي، عند والدي.
 Them:  Yeah, I—he is calling. طيب، بارك الله فيكم.
-Them:  حياكم. السلام عليكم.
-Them:  السلام عليكم ورحمة الله وبركاته.
+
